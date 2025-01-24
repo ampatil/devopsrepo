@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+
+   
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/ampatil/devopsrepo'
+            }
+        }
+
+
+        stage('Deploy') {
+            steps {
+                ansiblePlaybook credentialsId: 'sshkeyid', disableHostKeyChecking: true, installation: 'Ansible', inventory: 'inventory2', playbook: 'nginxplaybook.yml', vaultTmpPath: ''
+            }
+        }
+    }
+}
