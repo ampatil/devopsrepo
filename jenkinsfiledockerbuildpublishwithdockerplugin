@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_HUB_REPO = 'ampatil/nodejs-app'
+        DOCKER_CREDENTIALS_ID = 'dockerid'
+        
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/ampatil/devopsrepo'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Add your test commands here
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                        def app = docker.build(DOCKER_HUB_REPO)
+                        app.push('latest')
+                    }
+                }
+            }
+        }
+
+       
+    }
+}
